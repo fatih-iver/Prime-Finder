@@ -3,7 +3,8 @@
 #include <vector>
 #include <chrono>
 #include <iomanip>
-
+#include <cmath>
+#include <algorithm>
 
 using namespace std;
 
@@ -13,7 +14,13 @@ int main(int argc, char *argv[]) {
 
     int M = stoi(argv[1]);
 
+    int SL = sqrt(M);
+
+    int SU = SL % 2 == 0 ? SL + 1 : SL + 2;
+
     int N = M + 1;
+
+    int T = argc > 2 ? stoi(argv[2]) : 1;
 
     vector<int> primes;
 
@@ -22,25 +29,31 @@ int main(int argc, char *argv[]) {
 
     int n;
 
-    for(n = 5; n <= N; n+=2){
+    for(n = 5; n <= SL; n+=2){
 
         int rem;
         int quo;
 
         int k = 0;
+        int pk;
 
         do{
 
             k += 1;
 
-            rem = n % primes.at(k);
+            if(k >= primes.size())
+                break;
+
+            pk = primes.at(k);
+
+            rem = n % pk;
 
             if(rem == 0)
                 break;
 
-            quo = n / primes.at(k);
+            quo = n / pk;
 
-        } while(quo > primes.at(k));
+        } while(quo > pk);
 
         if(rem == 0)
             continue;
@@ -49,35 +62,73 @@ int main(int argc, char *argv[]) {
 
     }
 
-    cout << "Greatest prime smaller than " << N << ": " << primes.back() << endl;
+    //-----------------------------------------------------------------------------
+
+
+    #pragma omp parallel num_threads(T) default(shared) private(n)
+    {
+
+        vector<int> primesT;
+
+        #pragma omp for schedule(auto)
+        for(n = SU; n <= N; n+=2){
+
+            int rem;
+            int quo;
+
+            int k = 0;
+            int pk;
+
+            do{
+
+                k += 1;
+
+                if(k >= primes.size())
+                    break;
+
+                pk = primes.at(k);
+
+                rem = n % pk;
+
+                if(rem == 0)
+                    break;
+
+                quo = n / pk;
+
+            } while(quo > pk);
+
+            if(rem == 0)
+                continue;
+
+            primesT.push_back(n);
+
+        }
+
+        #pragma omp critical
+        {
+            for(int prime: primesT)
+                primes.push_back(prime);
+        }
+    }
+
+    //-----------------------------------------------------------------------------
+
+    sort(primes.begin(), primes.end());
+
+    /*
+    for(int i = 0; i < primes.size(); i++)
+        cout << primes[i] << " ";
+    cout << endl;
+     */
+
+    cout << "Greatest prime smaller than or equal to "<< M << " is " << primes.back() << endl;
 
     auto end = chrono::high_resolution_clock::now();
 
     double time_taken =chrono::duration_cast<chrono::nanoseconds>(end - start).count() *  1e-9;
 
-    cout << "Time taken by program: " << fixed
-         << time_taken << setprecision(9);
-    cout << " sec" << endl;
+    cout << "Time taken by the program is " << fixed<< time_taken << setprecision(9) << " seconds" << endl;
 
     return 0;
-
-    /*
-    int nthreads, tid;
-
-    #pragma omp parallel private(tid)
-    {
-
-        tid = omp_get_thread_num();
-        printf("Hello World from thread = %d\n", tid);
-
-        if (tid == 0)
-        {
-            nthreads = omp_get_num_threads();
-            printf("Number of threads = %d\n", nthreads);
-        }
-
-    }
-
-    */
 
 }
