@@ -1,0 +1,3 @@
+C:/Users/Fatih/CLionProjects/Prime Finder/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+C:/Users/Fatih/CLionProjects/Prime Finder/cmake-build-debug/CMakeFiles/Prime_Finder.dir
+C:/Users/Fatih/CLionProjects/Prime Finder/cmake-build-debug/CMakeFiles/edit_cache.dir
