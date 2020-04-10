@@ -73,5 +73,13 @@ M,Openmp Loop Scheduling Method,Chunk Size,,T1,T2,S2
 Check the created results.txt file to see calculation results!
 ```
 
+## What is prepopulated results.csv and results.pdf file?
+
+It contains the performance results of the program for different intervals, number of threads, scheduling methods and block sizes. See results.pdf for colored version of results.csv.
+
+## What was the machine specification?
+
+The machine had 64 virtual CPUs and 240 GB ram. There were acutally 32 physical CPUs each with 2 cores. CPU model was Intel Xeon and had 2.3 GHz clock rate. The virtual machine was created in Google Cloud.
+
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
